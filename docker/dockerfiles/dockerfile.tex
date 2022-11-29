@@ -1,0 +1,32 @@
+# vim: filetype=dockerfile
+FROM xiejw/ubuntu
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        wget \
+        perl-tk \
+        python3 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /profiles/ \
+    && mkdir -p /workdir
+
+# copy from assets folder.
+COPY texlive.profile /profiles/
+
+ENV TEXLIVE_INSTALL_TEXDIR=/usr/local/texlive
+
+RUN wget --no-check-certificate \
+    http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz \
+	  && tar -zxf install-tl-unx.tar.gz \
+    && cd install-tl-*/ \
+	  && ./install-tl --profile=/profiles/texlive.profile \
+    && cd / \
+    && rm -rf install*
+
+RUN bash -l -c 'echo export PATH="/usr/local/texlive/bin/$(uname -p)-linux:$PATH" >> /etc/bash.bashrc'
+
+WORKDIR /workdir
+
+CMD ["bash"]

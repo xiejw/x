@@ -1,0 +1,37 @@
+# vim: filetype=dockerfile
+#
+# check https://www.debian.org/releases/ for latest release info.
+# check https://hub.docker.com/_/debian for docker hub release.
+FROM debian:bullseye-slim
+
+# ------------------------------------------------------------------------------
+# apt: time zone and locate
+# ------------------------------------------------------------------------------
+# tzdata is required to set time zone.
+# locales is required for locale
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        tzdata locales \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# ------------------------------------------------------------------------------
+# time zone
+# ------------------------------------------------------------------------------
+
+ENV TZ=America/Los_Angeles
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# ------------------------------------------------------------------------------
+# locale
+# ------------------------------------------------------------------------------
+RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    dpkg-reconfigure --frontend=noninteractive locales && \
+    update-locale LANG=en_US.UTF-8
+
+ENV LANG en_US.UTF-8
+
+# ------------------------------------------------------------------------------
+# cmd
+# ------------------------------------------------------------------------------
+CMD ["bash"]

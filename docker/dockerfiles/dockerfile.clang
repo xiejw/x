@@ -1,0 +1,18 @@
+# vim: filetype=dockerfile
+
+# debian clang version is way too low. use ubuntu (newest version if possible)
+#
+# Visit this to find out the version
+#
+#    https://packages.ubuntu.com/search?keywords=clang&searchon=names&suite=all&section=all
+FROM xiejw/ubuntu
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        git make clang lld clang-format llvm lldb \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workdir
+
+CMD ["bash"]
