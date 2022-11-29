@@ -1,0 +1,7 @@
+# c
+.build*
+
+# vim
+*.swo
+*.swp
+
